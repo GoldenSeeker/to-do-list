@@ -1,16 +1,18 @@
+import json  # this allows the program to save tasks in a JSON format, which is more structured and easier to read than plain text
+
 tasks = []
 
-try: #this allows the program to run without crashing even if it fails
-    with open("tasks.txt", "r") as file:
-        for line in file:
-            tasks.append(line.strip())
+try:  # this allows the program to run without crashing even if it fails
+    with open("tasks.json", "r") as file:
+        tasks = json.load(file)
 except FileNotFoundError:
     pass  # If the file doesn't exist, it starts with an empty task list
 
-def save_tasks(): # this function saves the tasks to a file
-    with open("tasks.txt", "w") as file:
-        for task in tasks:
-            file.write(task + "\n")
+
+def save_tasks():  # this function saves the tasks to a file
+    with open("tasks.json", "w") as file:
+        json.dump(tasks, file)
+
 
 print("Welcome to the To-Do List App")
 while True:
@@ -55,3 +57,4 @@ while True:
         break
     else:
         print("Invalid choice. Please try again.")
+        #Ngl made a shit tonne of mistakes in this code, but I think it works now. I will try to make it better in the future.
