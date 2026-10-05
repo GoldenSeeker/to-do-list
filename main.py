@@ -1,4 +1,17 @@
 tasks = []
+
+try: #this allows the program to run without crashing even if it fails
+    with open("tasks.txt", "r") as file:
+        for line in file:
+            tasks.append(line.strip())
+except FileNotFoundError:
+    pass  # If the file doesn't exist, it starts with an empty task list
+
+def save_tasks(): # this function saves the tasks to a file
+    with open("tasks.txt", "w") as file:
+        for task in tasks:
+            file.write(task + "\n")
+
 print("Welcome to the To-Do List App")
 while True:
     print("\nMenu:")
@@ -12,6 +25,7 @@ while True:
     if choice == "1":
         task = input("Enter the new task: ")
         tasks.append(task)
+        save_tasks()
         print(f'Task "{task}" added.')
     elif choice == "2":
         if not tasks:
