@@ -11,40 +11,66 @@ except FileNotFoundError:
 
 def save_tasks():  # this function saves the tasks to a file
     with open("tasks.json", "w") as file:
-        json.dump(tasks, file)
+        json.dump(tasks, file, indent=4)  # indent=4 makes the JSON file more readable
 
-def show_tasks():
+def show_tasks(only_unfinished=False):  # this function shows the tasks, with an option to show only unfinished tasks
+    found = False
     print("Tasks:")
     for i, task in enumerate(tasks, start=1): #loops with a counter starting at 1
-        status = "[Done]" if task.get("done") else "[Not Done]" #picks a check or empty box based on the done value
+        if only_unfinished and task.get("done"):
+            continue
+        status = "[Done]" if task["done"] else "[Not Done]" # picks a check or empty box based on the done value
         print(f"{i}. {task['task']} {status}")
+        found = True
+    if not found:
+        print("No tasks found.")
+
+def get_task_number(message):
+    try:  # Guard against the user typing letters
+        num = int(input(message))  # Convert the typed text to a whole number
+    except ValueError:  # Runs if the input wasn't a number
+        print("Please enter a valid number.")
+        return None
+    if 1 <= num <= len(tasks):  # Check the number is within range
+        return num - 1  # Return the list position (minus 1 because Python counts from 0)
+    print("Invalid task number.")  # Number was out of range
+    return None
 
 print("Welcome to the To-Do List App")
 while True:
     print("\nMenu:")
     print("1. Add a task")
-    print("2. View tasks")
-    print("3. Mark a task as done")
-    print("4. Remove a task")
-    print("5. Exit")
+    print("2. View all tasks")
+    print("3. View unfinished tasks")
+    print("4. Mark a task as done")
+    print("5. Remove a task")
+    print("6. Exit")
 
-    choice = input("Enter your choice (1-5): ")
+    choice = input("Enter your choice (1-6): ")
 
     if choice == "1":
         task = input("Enter the new task: ")
         tasks.append({"task": task, "done": False})
         save_tasks()
         print(f'Task "{task}" added.')
+   
     elif choice == "2":
-        show_tasks()
-        
+        if not tasks:
+            print("No tasks to show.")
+        else:
+            show_tasks()
+
     elif choice == "3":
+        if not tasks:
+            print("No unfinished tasks to show.")
+        else:
+            show_tasks(only_unfinished=True)
+
+    elif choice == "4":
         if not tasks:
             print("No tasks to mark as done.")
         else:
             show_tasks()
-            for i, task in enumerate(tasks, start=1):
-                print(f"{i}. {task['task']} {('[Done]' if task.get('done') else '[Not Done]')}")
             try:
                 task_num = int(input("Enter the number of the task to mark as done: "))
                 if 1 <= task_num <= len(tasks):
@@ -55,7 +81,8 @@ while True:
                     print("Invalid task number.")
             except ValueError:
                 print("Please enter a valid number.")
-    elif choice == "4":
+
+    elif choice == "5":
         if not tasks:
             print("No tasks to remove.")
         else:
@@ -71,7 +98,7 @@ while True:
             except ValueError:
                 print("Please enter a valid number.")
 
-    elif choice == "5":
+    elif choice == "6":
         print("Exiting... Goodbye!")
         break
     else:
