@@ -5,3 +5,5 @@ venv/
 .env
 .vscode/
 .idea/
+tasks.txt
+tasks.json
